@@ -6,18 +6,18 @@
     public enum NodeState
     {
         /// <summary>
-        /// TODO.
+        /// The node has not ben explored.
         /// </summary>
-        Unconsidered = 0,
+        Unexplored = 0,
 
         /// <summary>
-        /// TODO.
+        /// The node is currently being explored.
         /// </summary>
         Open = 1,
 
         /// <summary>
-        /// TODO.
+        /// The node has been fully explored.
         /// </summary>
-        Closed = 2,
+        Explored = 2,
     }
 }

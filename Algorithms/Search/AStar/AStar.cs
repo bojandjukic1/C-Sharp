@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DataStructures.Queue;
 
 namespace Algorithms.Search.AStar
 {
@@ -18,12 +19,12 @@ namespace Algorithms.Search.AStar
                 node.CurrentCost = 0;
                 node.EstimatedCost = 0;
                 node.Parent = null;
-                node.State = NodeState.Unconsidered;
+                node.State = NodeState.Unexplored;
             }
         }
 
         /// <summary>
-        /// Generates the Path from an (solved) node graph, before it gets reset.
+        /// Generates the Path from a (solved) node graph, before it gets reset.
         /// </summary>
         /// <param name="target">The node where we want to go.</param>
         /// <returns>The Path to the target node.</returns>
@@ -42,7 +43,7 @@ namespace Algorithms.Search.AStar
         }
 
         /// <summary>
-        /// Computes the path from => to.
+        /// Computes the path from one node to another.
         /// </summary>
         /// <param name="from">Start node.</param>
         /// <param name="to">end node.</param>
@@ -52,7 +53,7 @@ namespace Algorithms.Search.AStar
             var done = new List<Node>();
 
             // A priority queue that will sort our nodes based on the total cost estimate
-            var open = new PriorityQueue<Node>();
+            var traversedNodes = new PriorityQueue<Node>();
             foreach (var node in from.ConnectedNodes)
             {
                 // Add connecting nodes if traversable
@@ -63,27 +64,27 @@ namespace Algorithms.Search.AStar
                     node.EstimatedCost = from.CurrentCost + node.DistanceTo(to);
 
                     // Enqueue
-                    open.Enqueue(node);
+                    traversedNodes.Enqueue(node);
                 }
             }
 
             while (true)
             {
                 // End Condition( Path not found )
-                if (open.Count == 0)
+                if (traversedNodes.Count == 0)
                 {
                     ResetNodes(done);
-                    ResetNodes(open.GetData());
+                    ResetNodes(traversedNodes.GetData());
                     return new List<Node>();
                 }
 
                 // Selecting next Element from queue
-                var current = open.Dequeue();
+                var current = traversedNodes.Dequeue();
 
                 // Add it to the done list
                 done.Add(current);
 
-                current.State = NodeState.Closed;
+                current.State = NodeState.Explored;
 
                 // EndCondition( Path was found )
                 if (current == to)
@@ -92,12 +93,12 @@ namespace Algorithms.Search.AStar
 
                     // Reset all Nodes that were used.
                     ResetNodes(done);
-                    ResetNodes(open.GetData());
+                    ResetNodes(traversedNodes.GetData());
                     return ret;
                 }
                 else
                 {
-                    AddOrUpdateConnected(current, to, open);
+                    AddOrUpdateConnected(current, to, traversedNodes);
                 }
             }
         }
@@ -107,13 +108,13 @@ namespace Algorithms.Search.AStar
             foreach (var connected in current.ConnectedNodes)
             {
                 if (!connected.Traversable ||
-                    connected.State == NodeState.Closed)
+                    connected.State == NodeState.Explored)
                 {
                     continue; // Do ignore already checked and not traversable nodes.
                 }
 
                 // Adds a previously not "seen" node into the Queue
-                if (connected.State == NodeState.Unconsidered)
+                if (connected.State == NodeState.Unexplored)
                 {
                     connected.Parent = current;
                     connected.CurrentCost = current.CurrentCost + current.DistanceTo(connected) * connected.TraversalCostMultiplier;
@@ -134,8 +135,7 @@ namespace Algorithms.Search.AStar
                 }
                 else
                 {
-                    // Codacy made me do it.
-                    throw new PathfindingException("Detected the same node twice. Confusion how this could ever happen");
+                    throw new PathfindingException("Detected the same node twice.");
                 }
             }
         }

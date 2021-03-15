@@ -31,7 +31,7 @@ namespace Algorithms.Search.AStar
         public double TraversalCostMultiplier { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to go from the start node to this node.
+        /// Gets or sets a value indicating the current cost to go from the start node to this node.
         /// </summary>
         public double CurrentCost { get; set; }
 
@@ -52,7 +52,7 @@ namespace Algorithms.Search.AStar
         public Node[] ConnectedNodes { get; set; } = new Node[0];
 
         /// <summary>
-        /// Gets or sets he "previous" node that was processed before this node.
+        /// Gets or sets the "previous" node that was processed before this node.
         /// </summary>
         public Node? Parent { get; set; }
 

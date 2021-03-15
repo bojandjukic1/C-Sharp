@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-// todo: extract to data structures
-namespace Algorithms.Search.AStar
+namespace DataStructures.Queue
 {
     /// <summary>
     /// Generic Priority Queue.
@@ -51,23 +50,25 @@ namespace Algorithms.Search.AStar
         }
 
         /// <summary>
-        /// Gets Number of enqueued items.
+        /// Gets the number of enqueued items.
         /// </summary>
         public int Count => list.Count;
 
         /// <summary>
         /// Enqueues an item into the Queue.
         /// </summary>
-        /// <param name="x">The item to Enqueue.</param>
-        public void Enqueue(T x)
+        /// <param name="item">The item to Enqueue.</param>
+        public void Enqueue(T item)
         {
-            list.Add(x);
-            var i = Count - 1; // Position of x
+            list.Add(item);
+
+            // Position of item
+            var i = Count - 1;
 
             while (i > 0)
             {
                 var p = (i - 1) / 2; // Start at half of i
-                if ((isDescending ? -1 : 1) * list[p].CompareTo(x) <= 0)
+                if ((isDescending ? -1 : 1) * list[p].CompareTo(item) <= 0)
                 {
                     break;
                 }
@@ -78,7 +79,7 @@ namespace Algorithms.Search.AStar
 
             if (Count > 0)
             {
-                list[i] = x; // If while loop way executed at least once(X got replaced by some p), add it to the list
+                list[i] = item; // If while loop way executed at least once(X got replaced by some p), add it to the list
             }
         }
 
